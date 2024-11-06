@@ -190,21 +190,26 @@ public class Client {
             outputHandler.displayMessage((i + 1) + ") " + files[i].getName());
         }
 
-        // Let user select a file
-        int choice = Integer.parseInt(inputHandler.getInput("Enter the file number to load: ")) - 1;
-        if (choice < 0 || choice >= files.length) {
-            outputHandler.displayMessage("Invalid choice.");
-            return;
-        }
+        try {
+            // Let user select a file
+            int choice = Integer.parseInt(inputHandler.getInput("Enter the file number to load: ")) - 1;
+            if (choice < 0 || choice >= files.length) {
+                outputHandler.displayMessage("Invalid choice.");
+                return;
+            }
 
-        String filePath = files[choice].getName();
-        currentSurvey = SerializeHelper.deserialize(Survey.class, filePath);
-        if (currentSurvey != null) {
-            // Set the handlers on Survey and its Questions after deserialization
-            currentSurvey.setHandlers(outputHandler, inputHandler);
-            outputHandler.displayMessage("Survey loaded successfully from " + filePath);
-        } else {
-            outputHandler.displayMessage("Failed to load survey.");
+            String filePath = files[choice].getName();
+            currentSurvey = SerializeHelper.deserialize(Survey.class, filePath);
+
+            if (currentSurvey != null) {
+                // Set the handlers on Survey and its Questions after deserialization
+                currentSurvey.setHandlers(outputHandler, inputHandler);
+                outputHandler.displayMessage("Survey loaded successfully from " + filePath);
+            } else {
+                outputHandler.displayMessage("Failed to load survey. Please try another file.");
+            }
+        } catch (Exception e) {
+            outputHandler.displayMessage("Error loading survey: " + e.getMessage());
         }
     }
 
@@ -213,11 +218,22 @@ public class Client {
             outputHandler.displayMessage("You must have a survey loaded in order to save it.");
             return;
         }
-        outputHandler.displayMessage("Enter the file path to save the survey: ");
-        String filePath = inputHandler.getInput("Please enter the file path to save the survey: ");
-        serializeHelper.serialize(Survey.class, currentSurvey, "", filePath);
-        outputHandler.displayMessage("Survey saved successfully!");
+
+        try {
+            outputHandler.displayMessage("Enter the file path to save the survey: ");
+            String filePath = inputHandler.getInput("Please enter the file path to save the survey: ");
+
+            String savedPath = serializeHelper.serialize(Survey.class, currentSurvey, "", filePath);
+            if (savedPath != null) {
+                outputHandler.displayMessage("Survey saved successfully at " + savedPath);
+            } else {
+                outputHandler.displayMessage("Failed to save survey. Please check the file path and try again.");
+            }
+        } catch (Exception e) {
+            outputHandler.displayMessage("Error saving survey: " + e.getMessage());
+        }
     }
+
 
     public void takeSurvey() {
         if (currentSurvey == null) {

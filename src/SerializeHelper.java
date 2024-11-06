@@ -19,29 +19,20 @@ public class SerializeHelper {
      * SerializationHelper.deserialize(Object.class, path) where "Object.class" is
      * whatever object type you're deserializing, e.g. "vehicle.Car.class" to deserialize the vehicle.Car
      */
-    public static <T> T deserialize(Class<T> type, String path){
-        // Test to make sure the path exists and is a file
-        File tst = new File(path);
-        if(!tst.exists() || !tst.isFile())
+    public static <T> T deserialize(Class<T> type, String path) {
+        File file = new File(path);
+        if (!file.exists() || !file.isFile()) {
             throw new IllegalArgumentException(path + " is invalid");
+        }
 
-        // Create the generic object that will hold the deserialized object
         T deserializedObject = null;
-        try{
-            // Streams to read it in
-            FileInputStream fis = new FileInputStream(path);
-            ObjectInputStream ois = new ObjectInputStream(fis);
+        try (FileInputStream fis = new FileInputStream(path);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
 
-            // Read it in with the cast to specific type
             deserializedObject = type.cast(ois.readObject());
 
-            // Cleanup
-            ois.close();
-            fis.close();
-        }
-        catch(IOException | ClassNotFoundException e){
-            e.printStackTrace();
-            System.exit(2);
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error deserializing file: " + e.getMessage());
         }
         return deserializedObject;
     }
@@ -55,27 +46,20 @@ public class SerializeHelper {
      * @param <T> A necessary generic qualifier, implicitly passed
      * @return The full path to the serialized object, stored on disk
      */
-    public static <T> String serialize(Class<T> type, Object obj, String dirPath,
-                                       String fileName){
-// Make sure the directory exists
+    public static <T> String serialize(Class<T> type, Object obj, String dirPath, String fileName) {
         File directory = new File(dirPath);
         if (!directory.exists()) {
-            directory.mkdirs(); // Creates the directory, including any necessary but nonexistent parent directories
+            directory.mkdirs();
         }
 
         String fullPath = dirPath + fileName;
-        try{
-            FileOutputStream fos = new FileOutputStream(fullPath);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
+        try (FileOutputStream fos = new FileOutputStream(fullPath);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
             oos.writeObject(type.cast(obj));
-
-            oos.close();
-            fos.close();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-            System.exit(2);
+        } catch (IOException e) {
+            System.err.println("Error serializing object: " + e.getMessage());
+            return null; // Return null to indicate serialization failure
         }
         return fullPath;
     }
