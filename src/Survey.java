@@ -123,14 +123,6 @@ public class Survey implements Serializable {
                     String newPrompt = inputHandler.getInput("Enter the new prompt: ");
                     dateQuestion.editQuestion(newPrompt);
                 }
-                String modifyDateRange = inputHandler.getInput("Do you want to modify the date range? (yes/no): ");
-                if (modifyDateRange.equalsIgnoreCase("yes")) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    LocalDate newStartDate = LocalDate.parse(inputHandler.getInput("Enter the new start date (yyyy-MM-dd): "), formatter);
-                    LocalDate newEndDate = LocalDate.parse(inputHandler.getInput("Enter the new end date (yyyy-MM-dd): "), formatter);
-                    dateQuestion.setDateRange(newStartDate, newEndDate);
-                    outputHandler.displayMessage("Date range modified successfully!");
-                }
             }
             // Check if the question is a MatchingQuestion
             else if (question instanceof MatchingQuestion) {

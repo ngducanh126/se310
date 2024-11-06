@@ -3,13 +3,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class ValidDateQuestion extends Question {
-    private LocalDate rangeStart;
-    private LocalDate rangeEnd;
-
     public ValidDateQuestion(String questionText, OutputHandler outputHandler, InputHandler inputHandler) {
         super(questionText, outputHandler, inputHandler);
-        this.rangeStart = LocalDate.MIN;  // Set default minimum date
-        this.rangeEnd = LocalDate.MAX;    // Set default maximum date
     }
 
     @Override
@@ -26,11 +21,7 @@ public class ValidDateQuestion extends Question {
         while (true) {
             try {
                 dateResponse = LocalDate.parse(response, formatter);
-                if (dateResponse.isBefore(rangeStart) || dateResponse.isAfter(rangeEnd)) {
-                    response = inputHandler.getInput("Date is out of the allowed range. Please enter a date within " + rangeStart + " and " + rangeEnd + ": ");
-                } else {
-                    break;
-                }
+                break;
             } catch (DateTimeParseException e) {
                 response = inputHandler.getInput("Invalid date format. Please enter the date in YYYY-MM-DD format: ");
             }
@@ -43,9 +34,4 @@ public class ValidDateQuestion extends Question {
         setQuestionText(newText);
     }
 
-    // Optional: Method to set a date range for validation
-    public void setDateRange(LocalDate start, LocalDate end) {
-        this.rangeStart = start;
-        this.rangeEnd = end;
-    }
 }
