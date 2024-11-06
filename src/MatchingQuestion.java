@@ -53,11 +53,67 @@ public class MatchingQuestion extends Question {
         // Check if the left part exists in leftItems and the right part exists in rightItems
         return leftItems.contains(leftOption) && rightItems.contains(rightOption);
     }
-
     @Override
-    public void editQuestion(String newText) {
-        setQuestionText(newText);
+    public void editQuestion() {
+        // Prompt to modify the question text
+        String modifyPrompt;
+        while (true) {
+            modifyPrompt = inputHandler.getInput("Do you want to modify the prompt? (yes/no): ");
+            if (modifyPrompt.equalsIgnoreCase("yes") || modifyPrompt.equalsIgnoreCase("no")) {
+                break;
+            }
+            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+        }
+
+        if (modifyPrompt.equalsIgnoreCase("yes")) {
+            String newPrompt = inputHandler.getInput("Enter the new prompt: ");
+            setQuestionText(newPrompt);
+            outputHandler.displayMessage("Matching question prompt modified successfully!");
+        }
+
+        // Prompt to modify the left items
+        String modifyLeftItems;
+        while (true) {
+            modifyLeftItems = inputHandler.getInput("Do you want to modify the left items? (yes/no): ");
+            if (modifyLeftItems.equalsIgnoreCase("yes") || modifyLeftItems.equalsIgnoreCase("no")) {
+                break;
+            }
+            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+        }
+
+        if (modifyLeftItems.equalsIgnoreCase("yes")) {
+            for (int i = 0; i < leftItems.size(); i++) {
+                outputHandler.displayMessage("Current left item " + (i + 1) + ": " + leftItems.get(i));
+                String newLeftItem = inputHandler.getInput("Enter new value for left item " + (i + 1) + " (or leave blank to keep current): ");
+                if (!newLeftItem.isEmpty()) {
+                    leftItems.set(i, newLeftItem);
+                }
+            }
+            outputHandler.displayMessage("Left items modified successfully!");
+        }
+
+        // Prompt to modify the right items
+        String modifyRightItems;
+        while (true) {
+            modifyRightItems = inputHandler.getInput("Do you want to modify the right items? (yes/no): ");
+            if (modifyRightItems.equalsIgnoreCase("yes") || modifyRightItems.equalsIgnoreCase("no")) {
+                break;
+            }
+            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+        }
+
+        if (modifyRightItems.equalsIgnoreCase("yes")) {
+            for (int i = 0; i < rightItems.size(); i++) {
+                outputHandler.displayMessage("Current right item " + (i + 1) + ": " + rightItems.get(i));
+                String newRightItem = inputHandler.getInput("Enter new value for right item " + (i + 1) + " (or leave blank to keep current): ");
+                if (!newRightItem.isEmpty()) {
+                    rightItems.set(i, newRightItem);
+                }
+            }
+            outputHandler.displayMessage("Right items modified successfully!");
+        }
     }
+
 
     public ArrayList<String> getLeftItems() {
         return leftItems;

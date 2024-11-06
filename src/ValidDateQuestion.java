@@ -27,11 +27,24 @@ public class ValidDateQuestion extends Question {
             }
         }
     }
-
-
     @Override
-    public void editQuestion(String newText) {
-        setQuestionText(newText);
+    public void editQuestion() {
+        // Prompt to modify the question text
+        String modifyPrompt;
+        while (true) {
+            modifyPrompt = inputHandler.getInput("Do you want to modify the prompt? (yes/no): ");
+            if (modifyPrompt.equalsIgnoreCase("yes") || modifyPrompt.equalsIgnoreCase("no")) {
+                break;
+            }
+            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+        }
+
+        if (modifyPrompt.equalsIgnoreCase("yes")) {
+            String newPrompt = inputHandler.getInput("Enter the new prompt: ");
+            setQuestionText(newPrompt);
+            outputHandler.displayMessage("Date question prompt modified successfully!");
+        }
     }
+
 
 }

@@ -1,12 +1,17 @@
-public class TrueFalseQuestion extends Question {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class TrueFalseQuestion extends MultipleChoiceQuestion {
 
     public TrueFalseQuestion(String questionText, OutputHandler outputHandler, InputHandler inputHandler) {
-        super(questionText, outputHandler, inputHandler);  // Pass questionText to superclass
+        super(questionText, new ArrayList<>(Arrays.asList("True", "False")), outputHandler, inputHandler);
     }
 
     @Override
     public void displayQuestion() {
+        // Display the question with True/False options
         outputHandler.displayMessage(questionText + " (True/False)");
+        super.displayQuestion();  // Display options (True/False) inherited from MultipleChoiceQuestion
     }
 
     @Override
@@ -15,11 +20,25 @@ public class TrueFalseQuestion extends Question {
         while (!response.equalsIgnoreCase("True") && !response.equalsIgnoreCase("False")) {
             response = inputHandler.getInput("Invalid input. Please answer True or False: ");
         }
-        responses.add(response); // Store the response in the superclass's responses list
+        responses.add(response); // Store the response
     }
 
     @Override
-    public void editQuestion(String newText) {
-        setQuestionText(newText);
+    public void editQuestion() {
+        // Since choices for True/False are fixed, only allow modifying the question text
+        String modifyPrompt;
+        while (true) {
+            modifyPrompt = inputHandler.getInput("Do you want to modify the prompt? (yes/no): ");
+            if (modifyPrompt.equalsIgnoreCase("yes") || modifyPrompt.equalsIgnoreCase("no")) {
+                break;
+            }
+            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+        }
+
+        if (modifyPrompt.equalsIgnoreCase("yes")) {
+            String newPrompt = inputHandler.getInput("Enter the new prompt: ");
+            setQuestionText(newPrompt);
+            outputHandler.displayMessage("True/False question prompt modified successfully!");
+        }
     }
 }

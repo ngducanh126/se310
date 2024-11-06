@@ -126,9 +126,24 @@ public class Client {
                 case 3:
                     // Short Answer Question
                     String saQuestionText = inputHandler.getInput("Enter the prompt for your Short Answer question: ");
-                    int characterLimit = Integer.parseInt(inputHandler.getInput("Enter the character limit for Short Answer: "));
+
+                    int characterLimit;
+                    while (true) {
+                        try {
+                            characterLimit = Integer.parseInt(inputHandler.getInput("Enter the character limit for Short Answer (must be a positive integer): "));
+                            if (characterLimit > 0) {
+                                break;
+                            } else {
+                                outputHandler.displayMessage("Please enter a positive number for the character limit.");
+                            }
+                        } catch (NumberFormatException e) {
+                            outputHandler.displayMessage("Invalid input. Please enter a valid positive integer.");
+                        }
+                    }
+
                     currentSurvey.addQuestion(new ShortAnswerQuestion(saQuestionText, characterLimit, outputHandler, inputHandler));
                     break;
+
 
                 case 4:
                     // Essay Question
@@ -147,15 +162,50 @@ public class Client {
                     String matchingQuestionText = inputHandler.getInput("Enter the prompt for your Matching question: ");
                     ArrayList<String> leftItems = new ArrayList<>();
                     ArrayList<String> rightItems = new ArrayList<>();
-                    int numItems = Integer.parseInt(inputHandler.getInput("Enter the number of items to match: "));
 
-                    for (int i = 1; i <= numItems; i++) {
+                    // Validate and get the number of left items
+                    int numLeftItems;
+                    while (true) {
+                        try {
+                            numLeftItems = Integer.parseInt(inputHandler.getInput("Enter the number of left items (must be a positive integer): "));
+                            if (numLeftItems > 0) {
+                                break;
+                            } else {
+                                outputHandler.displayMessage("Please enter a positive number.");
+                            }
+                        } catch (NumberFormatException e) {
+                            outputHandler.displayMessage("Invalid input. Please enter a valid positive integer.");
+                        }
+                    }
+
+                    // Validate and get the number of right items
+                    int numRightItems;
+                    while (true) {
+                        try {
+                            numRightItems = Integer.parseInt(inputHandler.getInput("Enter the number of right items (must be a positive integer): "));
+                            if (numRightItems > 0) {
+                                break;
+                            } else {
+                                outputHandler.displayMessage("Please enter a positive number.");
+                            }
+                        } catch (NumberFormatException e) {
+                            outputHandler.displayMessage("Invalid input. Please enter a valid positive integer.");
+                        }
+                    }
+
+                    // Collect left items
+                    for (int i = 1; i <= numLeftItems; i++) {
                         leftItems.add(inputHandler.getInput("Enter left item #" + i + ": "));
+                    }
+
+                    // Collect right items
+                    for (int i = 1; i <= numRightItems; i++) {
                         rightItems.add(inputHandler.getInput("Enter right item #" + i + ": "));
                     }
 
                     currentSurvey.addQuestion(new MatchingQuestion(matchingQuestionText, leftItems, rightItems, outputHandler, inputHandler));
                     break;
+
 
                 case 7:
                     outputHandler.displayMessage("Returning to the main menu.");

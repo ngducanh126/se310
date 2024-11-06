@@ -19,7 +19,7 @@ public abstract class Question implements Serializable {
     // Abstract methods that subclasses must implement
     public abstract void displayQuestion();
     public abstract void take();
-    public abstract void editQuestion(String newText);
+    public abstract void editQuestion();
 
     // Getters and setters
     public String getQuestionText() {

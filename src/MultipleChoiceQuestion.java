@@ -34,9 +34,63 @@ public class MultipleChoiceQuestion extends Question {
     }
 
     @Override
-    public void editQuestion(String newText) {
-        setQuestionText(newText);
+    public void editQuestion() {
+        // Prompt to modify the question text
+        String modifyPrompt;
+        while (true) {
+            modifyPrompt = inputHandler.getInput("Do you want to modify the prompt? (yes/no): ");
+            if (modifyPrompt.equalsIgnoreCase("yes") || modifyPrompt.equalsIgnoreCase("no")) {
+                break;
+            }
+            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+        }
+
+        if (modifyPrompt.equalsIgnoreCase("yes")) {
+            String newPrompt = inputHandler.getInput("Enter the new prompt: ");
+            setQuestionText(newPrompt);
+            outputHandler.displayMessage("Multiple-choice question prompt modified successfully!");
+        }
+
+        // Prompt to modify the choices
+        String modifyChoices;
+        while (true) {
+            modifyChoices = inputHandler.getInput("Do you want to modify the choices? (yes/no): ");
+            if (modifyChoices.equalsIgnoreCase("yes") || modifyChoices.equalsIgnoreCase("no")) {
+                break;
+            }
+            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+        }
+
+        if (modifyChoices.equalsIgnoreCase("yes")) {
+            // Display all choices
+            outputHandler.displayMessage("Current choices:");
+            for (int i = 0; i < choices.size(); i++) {
+                outputHandler.displayMessage((char) ('A' + i) + ") " + choices.get(i));
+            }
+
+            while (true) {
+                // Ask the user which choice they want to modify
+                String choiceToModify = inputHandler.getInput("Enter the letter of the choice you want to modify (or 'done' to finish): ").toUpperCase();
+                if (choiceToModify.equals("DONE")) {
+                    break;
+                }
+
+                // Check if the input is a valid choice
+                int choiceIndex = choiceToModify.charAt(0) - 'A';
+                if (choiceIndex >= 0 && choiceIndex < choices.size()) {
+                    String newChoice = inputHandler.getInput("Enter the new value for choice " + choiceToModify + " (or leave blank to keep current): ");
+                    if (!newChoice.isEmpty()) {
+                        choices.set(choiceIndex, newChoice);
+                        outputHandler.displayMessage("Choice " + choiceToModify + " modified successfully!");
+                    }
+                } else {
+                    outputHandler.displayMessage("Invalid choice. Please enter a valid letter.");
+                }
+            }
+            outputHandler.displayMessage("Multiple-choice options modified successfully!");
+        }
     }
+
 
     public ArrayList<String> getChoices() {
         return choices;
