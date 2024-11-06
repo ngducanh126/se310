@@ -45,4 +45,12 @@ public class MultipleChoiceQuestion extends Question {
     public void setChoices(ArrayList<String> choices) {
         this.choices = choices;
     }
+
+    public ArrayList<String> getOptions() {
+        return choices;
+    }
+
+    public void setOptions(ArrayList<String> choices) {
+        this.choices = choices;
+    }
 }

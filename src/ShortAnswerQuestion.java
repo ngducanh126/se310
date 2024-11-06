@@ -24,4 +24,12 @@ public class ShortAnswerQuestion extends Question {
     public void editQuestion(String newText) {
         setQuestionText(newText);
     }
+
+    public int getCharacterLimit() {
+        return characterLimit;
+    }
+
+    public void setCharacterLimit(int characterLimit) {
+        this.characterLimit = characterLimit;
+    }
 }

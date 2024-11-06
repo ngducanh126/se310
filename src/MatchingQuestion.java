@@ -30,4 +30,17 @@ public class MatchingQuestion extends Question {
     public void editQuestion(String newText) {
         setQuestionText(newText);
     }
+
+    public ArrayList<String> getLeftItems() {
+        return leftItems;
+    }
+
+    public ArrayList<String> getRightItems() {
+        return rightItems;
+    }
+
+    public void setMatchingItems(ArrayList<String> leftItems, ArrayList<String> rightItems) {
+        this.leftItems = leftItems;
+        this.rightItems = rightItems;
+    }
 }

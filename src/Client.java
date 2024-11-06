@@ -82,7 +82,7 @@ public class Client {
     public void createSurvey() {
         outputHandler.displayMessage("Enter the name of the new survey: ");
         String surveyName = inputHandler.getInput("Please enter survey name: ");
-        currentSurvey = new Survey(surveyName, outputHandler);
+        currentSurvey = new Survey(surveyName, outputHandler, inputHandler); // Pass inputHandler here
         outputHandler.displayMessage("Survey created successfully!");
 
         while (true) {
@@ -208,6 +208,6 @@ public class Client {
             outputHandler.displayMessage("You must have a survey loaded in order to modify it.");
             return;
         }
-        currentSurvey.modifySurvey();
+        currentSurvey.modifySurvey(); // Pass inputHandler
     }
 }
