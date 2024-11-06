@@ -170,9 +170,9 @@ public class Survey implements Serializable {
         outputHandler.displayMessage("Starting Survey: " + surveyName);
 
         for (Question question : questions) {
-            question.displayQuestion();
-            String answer = inputHandler.getInput("Your answer: ");
-            response.addResponse(answer); // Record each answer in the Response object
+            question.displayQuestion(); // Display question prompt
+            question.take(); // Take the input, with validation specific to each question type
+            response.addResponse(question.getResponses().get(question.getResponses().size() - 1));
         }
 
         outputHandler.displayMessage("Survey completed.");

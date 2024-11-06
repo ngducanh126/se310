@@ -16,18 +16,18 @@ public class ValidDateQuestion extends Question {
     public void take() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String response = inputHandler.getInput("Enter a date (YYYY-MM-DD): ");
-        LocalDate dateResponse;
 
         while (true) {
             try {
-                dateResponse = LocalDate.parse(response, formatter);
+                LocalDate dateResponse = LocalDate.parse(response, formatter);
+                responses.add(dateResponse.toString()); // Store in consistent format
                 break;
             } catch (DateTimeParseException e) {
                 response = inputHandler.getInput("Invalid date format. Please enter the date in YYYY-MM-DD format: ");
             }
         }
-        responses.add(response);
     }
+
 
     @Override
     public void editQuestion(String newText) {
