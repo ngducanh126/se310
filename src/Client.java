@@ -101,7 +101,20 @@ public class Client {
                     // Multiple Choice Question
                     String mcQuestionText = inputHandler.getInput("Enter the prompt for your multiple-choice question: ");
                     ArrayList<String> choices = new ArrayList<>();
-                    int numChoices = Integer.parseInt(inputHandler.getInput("Enter the number of choices: "));
+
+                    int numChoices = 0;
+                    while (true) {
+                        try {
+                            numChoices = Integer.parseInt(inputHandler.getInput("Enter the number of choices: "));
+                            if (numChoices > 0) {
+                                break;
+                            } else {
+                                outputHandler.displayMessage("Please enter a positive number.");
+                            }
+                        } catch (NumberFormatException e) {
+                            outputHandler.displayMessage("Invalid input. Please enter a valid number.");
+                        }
+                    }
 
                     for (int i = 1; i <= numChoices; i++) {
                         choices.add(inputHandler.getInput("Enter choice #" + i + ": "));
