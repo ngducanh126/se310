@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDate;
@@ -174,11 +175,34 @@ public class Client {
     }
 
     public void loadSurvey() {
-        outputHandler.displayMessage("Enter the file path to load the survey: ");
-        String filePath = inputHandler.getInput("Please enter the file path to load the survey: ");
-        currentSurvey = serializeHelper.deserialize(Survey.class, filePath);
+        outputHandler.displayMessage("Please select a file to load:");
+
+        // List available survey files
+        File dir = new File("."); // Current directory for relative paths
+        File[] files = dir.listFiles((d, name) -> name.endsWith(".ser"));
+        if (files == null || files.length == 0) {
+            outputHandler.displayMessage("No saved surveys found.");
+            return;
+        }
+
+        // Display list of surveys
+        for (int i = 0; i < files.length; i++) {
+            outputHandler.displayMessage((i + 1) + ") " + files[i].getName());
+        }
+
+        // Let user select a file
+        int choice = Integer.parseInt(inputHandler.getInput("Enter the file number to load: ")) - 1;
+        if (choice < 0 || choice >= files.length) {
+            outputHandler.displayMessage("Invalid choice.");
+            return;
+        }
+
+        String filePath = files[choice].getName();
+        currentSurvey = SerializeHelper.deserialize(Survey.class, filePath);
         if (currentSurvey != null) {
-            outputHandler.displayMessage("Survey loaded successfully!");
+            // Set the handlers on Survey and its Questions after deserialization
+            currentSurvey.setHandlers(outputHandler, inputHandler);
+            outputHandler.displayMessage("Survey loaded successfully from " + filePath);
         } else {
             outputHandler.displayMessage("Failed to load survey.");
         }

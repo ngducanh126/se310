@@ -3,19 +3,20 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
 
 public class Survey implements Serializable {
     private static final long serialVersionUID = 1L;
     private String surveyName;
     private List<Question> questions;
-    private OutputHandler outputHandler;
-    private InputHandler inputHandler; // Add this field
+    private transient OutputHandler outputHandler; // Marked transient to avoid serialization
+    private transient InputHandler inputHandler;   // Marked transient to avoid serialization
 
     public Survey(String surveyName, OutputHandler outputHandler, InputHandler inputHandler) {
         this.surveyName = surveyName;
         this.questions = new ArrayList<>();
         this.outputHandler = outputHandler;
-        this.inputHandler = inputHandler; // Initialize in constructor
+        this.inputHandler = inputHandler;
     }
 
     // Adds a question to the survey
@@ -181,9 +182,18 @@ public class Survey implements Serializable {
     }
 
     // Saves the survey to a file
-    public void saveSurvey(String filePath) {
-        SerializeHelper.serialize(Survey.class, this, "", filePath);
-        outputHandler.displayMessage("Survey saved to " + filePath);
+    public void saveSurvey(String dirPath, String fileName) {
+        // Ensure directory exists
+        File directory = new File(dirPath);
+        if (!directory.exists()) {
+            directory.mkdirs(); // Create directories if they don't exist
+        }
+
+        // Use SerializeHelper to save the Survey object
+        System.out.println("about to serialize");
+        SerializeHelper.serialize(Survey.class, this, dirPath, fileName);
+
+        outputHandler.displayMessage("Survey saved successfully to " + dirPath + fileName);
     }
 
     // Loads the survey from a file
@@ -194,5 +204,22 @@ public class Survey implements Serializable {
 
     public String getName() {
         return surveyName;
+    }
+
+    public void setOutputHandler(OutputHandler outputHandler) {
+        this.outputHandler = outputHandler;
+    }
+
+    public void setInputHandler(InputHandler inputHandler) {
+        this.inputHandler = inputHandler;
+    }
+    public void setHandlers(OutputHandler outputHandler, InputHandler inputHandler) {
+        this.outputHandler = outputHandler;
+        this.inputHandler = inputHandler;
+
+        for (Question question : questions) {
+            question.setOutputHandler(outputHandler);
+            question.setInputHandler(inputHandler);
+        }
     }
 }
