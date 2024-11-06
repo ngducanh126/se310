@@ -168,17 +168,23 @@ public class Survey implements Serializable {
 
 
     // Simulates taking the survey
-    public void takeSurvey() {
+    public Response takeSurvey() {
         if (questions.isEmpty()) {
             outputHandler.displayMessage("No questions available in this survey.");
-            return;
+            return null;
         }
 
+        Response response = new Response(outputHandler);
         outputHandler.displayMessage("Starting Survey: " + surveyName);
+
         for (Question question : questions) {
-            question.take();
+            question.displayQuestion();
+            String answer = inputHandler.getInput("Your answer: ");
+            response.addResponse(answer); // Record each answer in the Response object
         }
-        outputHandler.displayMessage("Survey completed. Thank you for your responses!");
+
+        outputHandler.displayMessage("Survey completed.");
+        return response;
     }
 
     // Saves the survey to a file

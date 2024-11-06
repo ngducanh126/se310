@@ -224,7 +224,18 @@ public class Client {
             outputHandler.displayMessage("You must have a survey loaded in order to take it.");
             return;
         }
-        currentSurvey.takeSurvey();
+
+        // Start taking the survey
+        Response response = currentSurvey.takeSurvey(); // Returns a Response object with user answers
+        outputHandler.displayMessage("Survey completed. Saving responses...");
+
+        // Save the response
+        String fileName = "response_" + currentSurvey.getName() + "_" + System.currentTimeMillis() + ".ser";
+        String filePath = "./responses/" + fileName;
+
+        // Assume serialization is successful
+        serializeHelper.serialize(Response.class, response, "./responses/", fileName);
+        outputHandler.displayMessage("Responses saved successfully in " + filePath);
     }
 
     public void modifySurvey() {
