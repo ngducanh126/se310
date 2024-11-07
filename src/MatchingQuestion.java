@@ -30,22 +30,22 @@ public class MatchingQuestion extends Question {
             if (i < leftSize) {
                 leftColumn.append((char) ('A' + i)).append(") ").append(leftItems.get(i));
             } else {
-                leftColumn.append("     "); // Padding for missing left items if right list is longer
+                leftColumn.append("     ");
             }
-            leftColumn.append("\n"); // New line after each left item
+            leftColumn.append("\n");
 
             // Add right item with label (e.g., 1), if available
             if (i < rightSize) {
                 rightColumn.append((i + 1)).append(") ").append(rightItems.get(i));
             }
-            rightColumn.append("\n"); // New line after each right item
+            rightColumn.append("\n");
         }
 
-        // Output the columns side by side by splitting into lines and combining them
+        // Output the columns side by side
         String[] leftLines = leftColumn.toString().split("\n");
         String[] rightLines = rightColumn.toString().split("\n");
 
-        // Display both columns in the aligned format
+        // Display both columns
         for (int i = 0; i < maxItems; i++) {
             outputHandler.displayMessage(
                     String.format("%-20s %s", leftLines[i], i < rightLines.length ? rightLines[i] : "")
@@ -129,7 +129,6 @@ public class MatchingQuestion extends Question {
 
     // Helper method to validate the input format
     private boolean isValidFormat(String response) {
-        // Ensure format is 'A 1' (left option letter followed by right option number)
         if (response == null || response.trim().isEmpty() || !response.contains(" ")) {
             return false;
         }

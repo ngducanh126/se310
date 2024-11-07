@@ -5,8 +5,8 @@ public abstract class Question implements Serializable {
     private static final long serialVersionUID = 1L;
     protected String questionText;
     protected ArrayList<String> responses;
-    protected transient OutputHandler outputHandler; // Marked as transient
-    protected transient InputHandler inputHandler;   // Marked as transient
+    protected transient OutputHandler outputHandler;
+    protected transient InputHandler inputHandler;
 
     // Constructor with questionText parameter
     public Question(String questionText, OutputHandler outputHandler, InputHandler inputHandler) {
@@ -32,15 +32,6 @@ public abstract class Question implements Serializable {
 
     public ArrayList<String> getResponses() {
         return responses;
-    }
-
-    public void saveQuestion(String filePath) {
-        // Serialization logic here if needed
-    }
-
-    public static Question loadQuestion(String filePath) {
-        // Deserialization logic here if needed
-        return null;
     }
 
     public void setOutputHandler(OutputHandler outputHandler) {

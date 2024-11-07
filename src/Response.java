@@ -15,7 +15,6 @@ public class Response implements Serializable {
         userAnswers.add(answer);
     }
 
-    // Optional: for displaying or debugging purposes
     public String getResponseSummary() {
         StringBuilder summary = new StringBuilder();
         for (int i = 0; i < userAnswers.size(); i++) {

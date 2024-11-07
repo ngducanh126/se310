@@ -33,8 +33,6 @@ public class EssayQuestion extends Question {
         }
     }
 
-
-
     @Override
     public void editQuestion() {
         String modifyPrompt;
