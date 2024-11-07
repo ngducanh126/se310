@@ -4,14 +4,13 @@ import java.util.Arrays;
 public class TrueFalseQuestion extends MultipleChoiceQuestion {
 
     public TrueFalseQuestion(String questionText, OutputHandler outputHandler, InputHandler inputHandler) {
-        super(questionText, new ArrayList<>(Arrays.asList("True", "False")), outputHandler, inputHandler);
+        super(questionText, new ArrayList<>(Arrays.asList("True", "False")), 1, outputHandler, inputHandler);
     }
 
     @Override
     public void displayQuestion() {
         // Display the question with True/False options
-        outputHandler.displayMessage(questionText + " (True/False)");
-        super.displayQuestion();  // Display options (True/False) inherited from MultipleChoiceQuestion
+        outputHandler.displayMessage(questionText + " (True or False Question)");
     }
 
     @Override

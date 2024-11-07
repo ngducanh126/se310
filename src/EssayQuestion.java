@@ -6,7 +6,7 @@ public class EssayQuestion extends Question {
 
     @Override
     public void displayQuestion() {
-        outputHandler.displayMessage(questionText);
+        outputHandler.displayMessage(questionText + " (Essay Question)");
     }
 
     @Override

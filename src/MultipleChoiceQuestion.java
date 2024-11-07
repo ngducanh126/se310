@@ -1,16 +1,19 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class MultipleChoiceQuestion extends Question {
     private ArrayList<String> choices;
+    private int maxValidChoices;
 
-    public MultipleChoiceQuestion(String questionText, ArrayList<String> choices, OutputHandler outputHandler, InputHandler inputHandler) {
+    public MultipleChoiceQuestion(String questionText, ArrayList<String> choices, int maxValidChoices, OutputHandler outputHandler, InputHandler inputHandler) {
         super(questionText, outputHandler, inputHandler);
         this.choices = choices;
+        this.maxValidChoices = maxValidChoices;
     }
 
     @Override
     public void displayQuestion() {
-        outputHandler.displayMessage(questionText);
+        outputHandler.displayMessage(questionText + " (Select up to " + maxValidChoices + " choices)");
         for (int i = 0; i < choices.size(); i++) {
             outputHandler.displayMessage((char) ('A' + i) + ") " + choices.get(i));
         }
@@ -18,16 +21,45 @@ public class MultipleChoiceQuestion extends Question {
 
     @Override
     public void take() {
-        String response = inputHandler.getInput("Select an option (A, B, C, ...): ");
-        while (!isValidChoice(response)) {
-            response = inputHandler.getInput("Invalid option. Please select a valid choice: ");
+        outputHandler.displayMessage("You can select up to " + maxValidChoices + " unique choices.");
+
+        int numSelections = 0;
+        while (true) {
+            try {
+                numSelections = Integer.parseInt(inputHandler.getInput("Enter the number of choices you want to make (1 to " + maxValidChoices + "): "));
+                if (numSelections > 0 && numSelections <= maxValidChoices) {
+                    break;
+                } else {
+                    outputHandler.displayMessage("Please enter a number between 1 and " + maxValidChoices + ".");
+                }
+            } catch (NumberFormatException e) {
+                outputHandler.displayMessage("Invalid input. Please enter a valid number.");
+            }
         }
-        responses.add(response);
+
+        HashSet<String> selectedChoices = new HashSet<>();
+        for (int i = 0; i < numSelections; i++) {
+            String response;
+            while (true) {
+                response = inputHandler.getInput("Select choice #" + (i + 1) + " (A, B, C, ...): ").toUpperCase();
+                if (isValidChoice(response) && !selectedChoices.contains(response)) {
+                    selectedChoices.add(response);
+                    break;
+                } else if (selectedChoices.contains(response)) {
+                    outputHandler.displayMessage("You've already selected this choice. Please select a different choice.");
+                } else {
+                    outputHandler.displayMessage("Invalid choice. Please select a valid option.");
+                }
+            }
+        }
+
+        // Store the responses as a comma-separated string
+        responses.add(String.join(", ", selectedChoices));
     }
 
     private boolean isValidChoice(String response) {
         if (response.length() == 1) {
-            char choice = response.toUpperCase().charAt(0);
+            char choice = response.charAt(0);
             return choice >= 'A' && choice < 'A' + choices.size();
         }
         return false;
@@ -89,22 +121,29 @@ public class MultipleChoiceQuestion extends Question {
             }
             outputHandler.displayMessage("Multiple-choice options modified successfully!");
         }
-    }
 
+        // Prompt to modify the maxValidChoices
+        while (true) {
+            try {
+                int newMaxValidChoices = Integer.parseInt(inputHandler.getInput("Enter the maximum number of choices allowed (1 to " + choices.size() + "): "));
+                if (newMaxValidChoices > 0 && newMaxValidChoices <= choices.size()) {
+                    maxValidChoices = newMaxValidChoices;
+                    outputHandler.displayMessage("Maximum number of allowed choices modified successfully!");
+                    break;
+                } else {
+                    outputHandler.displayMessage("Please enter a number between 1 and " + choices.size() + ".");
+                }
+            } catch (NumberFormatException e) {
+                outputHandler.displayMessage("Invalid input. Please enter a valid number.");
+            }
+        }
+    }
 
     public ArrayList<String> getChoices() {
         return choices;
     }
 
     public void setChoices(ArrayList<String> choices) {
-        this.choices = choices;
-    }
-
-    public ArrayList<String> getOptions() {
-        return choices;
-    }
-
-    public void setOptions(ArrayList<String> choices) {
         this.choices = choices;
     }
 }

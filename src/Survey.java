@@ -27,7 +27,8 @@ public class Survey implements Serializable {
 
     // Displays the survey and its questions
     public void displaySurvey() {
-        outputHandler.displayMessage("\nSurvey: " + surveyName);
+        outputHandler.displayMessage("\n--- Survey: " + surveyName + " ---\n");
+
         if (questions.isEmpty()) {
             outputHandler.displayMessage("No questions in this survey.");
             return;
@@ -35,11 +36,19 @@ public class Survey implements Serializable {
 
         int questionNumber = 1;
         for (Question question : questions) {
-            outputHandler.displayMessage(questionNumber + ". ");
+            // Display question number
+            outputHandler.displayMessage(String.valueOf(questionNumber) +'.');
+
+            // Display the question details (options, format, etc.)
             question.displayQuestion();
+
+            // Add an empty line between each question for better readability
+            outputHandler.displayMessage("");
+
             questionNumber++;
         }
     }
+
 
     // Modifies an existing question in the survey
     public void modifySurvey() {

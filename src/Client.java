@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDate;
@@ -81,8 +82,18 @@ public class Client {
     }
 
     public void createSurvey() {
-        outputHandler.displayMessage("Enter the name of the new survey: ");
-        String surveyName = inputHandler.getInput("Please enter survey name: ");
+        String surveyName;
+        String invalidCharsPattern = "[/\\\\:*?\"<>|]";
+        // Loop until a valid survey name is entered
+        while (true) {
+            surveyName = inputHandler.getInput("Please enter survey name. Please avoid using special characters like / \\ : * ? \" < > |   :");
+            // Check if surveyName contains any invalid characters
+            if (surveyName.matches(".*" + invalidCharsPattern + ".*")) {
+                outputHandler.displayMessage("Invalid survey name. Please avoid using special characters like / \\ : * ? \" < > |.");
+            } else {
+                break; // Exit the loop if the survey name is valid
+            }
+        }
         currentSurvey = new Survey(surveyName, outputHandler, inputHandler); // Pass inputHandler here
         outputHandler.displayMessage("Survey created successfully!");
 
@@ -115,13 +126,30 @@ public class Client {
                             outputHandler.displayMessage("Invalid input. Please enter a valid number.");
                         }
                     }
+                    // Prompt for the maximum valid choices allowed
+                    int maxValidChoices = 0;
+                    while (true) {
+                        try {
+                            maxValidChoices = Integer.parseInt(inputHandler.getInput("Enter the maximum number of choices a user can select (1 to " + numChoices + "): "));
+                            if (maxValidChoices > 0 && maxValidChoices <= numChoices) {
+                                break;
+                            } else {
+                                outputHandler.displayMessage("Please enter a positive number that is no more than the total number of choices.");
+                            }
+                        } catch (NumberFormatException e) {
+                            outputHandler.displayMessage("Invalid input. Please enter a valid number.");
+                        }
+                    }
 
+                    // Collect each choice
                     for (int i = 1; i <= numChoices; i++) {
                         choices.add(inputHandler.getInput("Enter choice #" + i + ": "));
                     }
 
-                    currentSurvey.addQuestion(new MultipleChoiceQuestion(mcQuestionText, choices, outputHandler, inputHandler));
+                    // Add the question to the survey with maxValidChoices as the allowed selection limit
+                    currentSurvey.addQuestion(new MultipleChoiceQuestion(mcQuestionText, choices, maxValidChoices, outputHandler, inputHandler));
                     break;
+
 
                 case 3:
                     // Short Answer Question
@@ -238,30 +266,45 @@ public class Client {
     }
 
     public void loadSurvey() {
-        outputHandler.displayMessage("Please select a file to load:");
+        outputHandler.displayMessage("Please select a file to load (the files are listed from the surveys directory) :");
 
-        // List available survey files
-        File dir = new File("."); // Current directory for relative paths
-        File[] files = dir.listFiles((d, name) -> name.endsWith(".ser"));
-        if (files == null || files.length == 0) {
-            outputHandler.displayMessage("No saved surveys found.");
+        // Define directory path for surveys
+        File dir = new File("./surveys"); // Look in the 'surveys' directory
+        if (!dir.exists() || !dir.isDirectory()) {
+            outputHandler.displayMessage("Default Survey directory not found. Please ensure the 'surveys' directory exists. It should have been created when you create and save a survey");
             return;
         }
 
-        // Display list of surveys
+        // List all files in the directory
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            outputHandler.displayMessage("No saved surveys found in the 'surveys' directory.");
+            return;
+        }
+
+        // Display list of available survey files
         for (int i = 0; i < files.length; i++) {
             outputHandler.displayMessage((i + 1) + ") " + files[i].getName());
         }
 
         try {
             // Let user select a file
-            int choice = Integer.parseInt(inputHandler.getInput("Enter the file number to load: ")) - 1;
-            if (choice < 0 || choice >= files.length) {
-                outputHandler.displayMessage("Invalid choice.");
-                return;
+            int choice;
+            while (true) {
+                try {
+                    choice = Integer.parseInt(inputHandler.getInput("Enter the file number to load: ")) - 1;
+                    if (choice >= 0 && choice < files.length) {
+                        break;
+                    } else {
+                        outputHandler.displayMessage("Invalid choice. Please select a number from the list.");
+                    }
+                } catch (NumberFormatException e) {
+                    outputHandler.displayMessage("Invalid input. Please enter a valid number.");
+                }
             }
 
-            String filePath = files[choice].getName();
+            // Load the selected file
+            String filePath = "./surveys/" + files[choice].getName();
             currentSurvey = SerializeHelper.deserialize(Survey.class, filePath);
 
             if (currentSurvey != null) {
@@ -269,10 +312,10 @@ public class Client {
                 currentSurvey.setHandlers(outputHandler, inputHandler);
                 outputHandler.displayMessage("Survey loaded successfully from " + filePath);
             } else {
-                outputHandler.displayMessage("Failed to load survey. Please try another file.");
+                outputHandler.displayMessage("Failed to load survey. The file may be corrupted or incompatible.");
             }
         } catch (Exception e) {
-            outputHandler.displayMessage("Error loading survey: " + e.getMessage());
+            outputHandler.displayMessage("Unexpected error loading survey: " + e.getMessage());
         }
     }
 
@@ -283,10 +326,21 @@ public class Client {
         }
 
         try {
-            outputHandler.displayMessage("Enter the file path to save the survey: ");
-            String filePath = inputHandler.getInput("Please enter the file path to save the survey: ");
+            // Directory path for surveys
+            String directoryPath = "./surveys/";
+            File directory = new File(directoryPath);
 
-            String savedPath = serializeHelper.serialize(Survey.class, currentSurvey, "", filePath);
+            // Ensure the directory exists
+            if (!directory.exists()) {
+                directory.mkdirs(); // Create the directory if it does not exist
+            }
+
+            // File path to save the survey
+            String filePath = directoryPath + currentSurvey.getName() + ".ser";
+
+            // Serialize and save the survey
+            String savedPath = serializeHelper.serialize(Survey.class, currentSurvey, directoryPath, currentSurvey.getName() + ".ser");
+
             if (savedPath != null) {
                 outputHandler.displayMessage("Survey saved successfully at " + savedPath);
             } else {

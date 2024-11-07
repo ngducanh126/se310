@@ -12,9 +12,42 @@ public class MatchingQuestion extends Question {
 
     @Override
     public void displayQuestion() {
-        outputHandler.displayMessage(questionText);
-        for (int i = 0; i < leftItems.size(); i++) {
-            outputHandler.displayMessage((char) ('A' + i) + ") " + leftItems.get(i) + " <-> " + (i + 1) + ". " + rightItems.get(i));
+        outputHandler.displayMessage(questionText+" (Matching Question)");
+
+        // Find the maximum size for left and right items to handle varying lengths.
+        int leftSize = leftItems.size();
+        int rightSize = rightItems.size();
+        int maxItems = Math.max(leftSize, rightSize);
+
+        StringBuilder leftColumn = new StringBuilder();
+        StringBuilder rightColumn = new StringBuilder();
+
+        // Build each column separately
+        for (int i = 0; i < maxItems; i++) {
+            // Add left item with label (e.g., A), if available
+            if (i < leftSize) {
+                leftColumn.append((char) ('A' + i)).append(") ").append(leftItems.get(i));
+            } else {
+                leftColumn.append("     "); // Padding for missing left items if right list is longer
+            }
+            leftColumn.append("\n"); // New line after each left item
+
+            // Add right item with label (e.g., 1), if available
+            if (i < rightSize) {
+                rightColumn.append((i + 1)).append(") ").append(rightItems.get(i));
+            }
+            rightColumn.append("\n"); // New line after each right item
+        }
+
+        // Output the columns side by side by splitting into lines and combining them
+        String[] leftLines = leftColumn.toString().split("\n");
+        String[] rightLines = rightColumn.toString().split("\n");
+
+        // Display both columns in the aligned format
+        for (int i = 0; i < maxItems; i++) {
+            outputHandler.displayMessage(
+                    String.format("%-20s %s", leftLines[i], i < rightLines.length ? rightLines[i] : "")
+            );
         }
     }
 
