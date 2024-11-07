@@ -102,10 +102,23 @@ public class Survey implements Serializable {
 
     // Saves the survey to a file
     public void saveSurvey(String dirPath, String fileName) {
+        // Ensure directory exists
+        File directory = new File(dirPath);
+        if (!directory.exists()) {
+            directory.mkdirs(); // Create directories if they don't exist
+        }
+
+        // Use SerializeHelper to save the Survey object
+        System.out.println("about to serialize");
+        SerializeHelper.serialize(Survey.class, this, dirPath, fileName);
+
+        outputHandler.displayMessage("Survey saved successfully to " + dirPath + fileName);
     }
 
     // Loads the survey from a file
     public static Survey loadSurvey(String filePath) {
+        Survey loadedSurvey = SerializeHelper.deserialize(Survey.class, filePath);
+        return loadedSurvey;
     }
 
     public String getName() {
