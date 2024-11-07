@@ -6,14 +6,34 @@ public class EssayQuestion extends Question {
 
     @Override
     public void displayQuestion() {
-        outputHandler.displayMessage(questionText + " (Essay Question)");
+        outputHandler.displayMessage(questionText + " (Essay Question. You can write many paragraphs)");
     }
 
     @Override
     public void take() {
-        String response = inputHandler.getInput("Your essay response (you may write multiple paragraphs): ");
-        responses.add(response);
+        outputHandler.displayMessage("Your essay response (press Enter after each paragraph).");
+
+        while (true) {
+            String response = inputHandler.getInput("> ");
+            responses.add(response);
+
+            String continueResponse;
+            while (true) {
+                continueResponse = inputHandler.getInput("Do you want to add another paragraph? (yes/no): ");
+                if (continueResponse.equalsIgnoreCase("yes") || continueResponse.equalsIgnoreCase("no")) {
+                    break;
+                }
+                outputHandler.displayMessage("Invalid input. Please type 'yes' or 'no'.");
+            }
+
+            if (continueResponse.equalsIgnoreCase("no")) {
+                outputHandler.displayMessage("Essay responses saved.");
+                break;
+            }
+        }
     }
+
+
 
     @Override
     public void editQuestion() {

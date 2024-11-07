@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class MatchingQuestion extends Question {
     private ArrayList<String> leftItems;
@@ -104,49 +105,78 @@ public class MatchingQuestion extends Question {
             outputHandler.displayMessage("Matching question prompt modified successfully!");
         }
 
-        // Prompt to modify the left items
-        String modifyLeftItems;
-        while (true) {
-            modifyLeftItems = inputHandler.getInput("Do you want to modify the left items? (yes/no): ");
-            if (modifyLeftItems.equalsIgnoreCase("yes") || modifyLeftItems.equalsIgnoreCase("no")) {
-                break;
-            }
-            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
-        }
-
+        // Prompt to modify left items
+        String modifyLeftItems = inputHandler.getInput("Do you want to modify the left items? (yes/no): ");
         if (modifyLeftItems.equalsIgnoreCase("yes")) {
-            for (int i = 0; i < leftItems.size(); i++) {
-                outputHandler.displayMessage("Current left item " + (i + 1) + ": " + leftItems.get(i));
-                String newLeftItem = inputHandler.getInput("Enter new value for left item " + (i + 1) + " (or leave blank to keep current): ");
-                if (!newLeftItem.isEmpty()) {
-                    leftItems.set(i, newLeftItem);
-                }
-            }
-            outputHandler.displayMessage("Left items modified successfully!");
+            modifyItems(leftItems, "left");
         }
 
-        // Prompt to modify the right items
-        String modifyRightItems;
-        while (true) {
-            modifyRightItems = inputHandler.getInput("Do you want to modify the right items? (yes/no): ");
-            if (modifyRightItems.equalsIgnoreCase("yes") || modifyRightItems.equalsIgnoreCase("no")) {
-                break;
-            }
-            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
-        }
-
+        // Prompt to modify right items
+        String modifyRightItems = inputHandler.getInput("Do you want to modify the right items? (yes/no): ");
         if (modifyRightItems.equalsIgnoreCase("yes")) {
-            for (int i = 0; i < rightItems.size(); i++) {
-                outputHandler.displayMessage("Current right item " + (i + 1) + ": " + rightItems.get(i));
-                String newRightItem = inputHandler.getInput("Enter new value for right item " + (i + 1) + " (or leave blank to keep current): ");
-                if (!newRightItem.isEmpty()) {
-                    rightItems.set(i, newRightItem);
-                }
-            }
-            outputHandler.displayMessage("Right items modified successfully!");
+            modifyItems(rightItems, "right");
         }
     }
 
+    // Helper method to modify specified items in a list (left or right)
+    private void modifyItems(ArrayList<String> items, String side) {
+        outputHandler.displayMessage("Current " + side + " items:");
+        for (int i = 0; i < items.size(); i++) {
+            outputHandler.displayMessage((char) ('A' + i) + ") " + items.get(i));
+        }
+
+        // Prompt for items to modify
+        List<Integer> indicesToModify = getIndicesToModify(items.size(), side);
+        for (int index : indicesToModify) {
+            String currentItem = items.get(index);
+            outputHandler.displayMessage("Current " + side + " item " + (char) ('A' + index) + ": " + currentItem);
+            String newItem = inputHandler.getInput("Enter new value for " + side + " item " + (char) ('A' + index) + " : ");
+            if (!newItem.isEmpty()) {
+                items.set(index, newItem);
+                outputHandler.displayMessage(side + " item " + (char) ('A' + index) + " modified successfully!");
+            }
+        }
+    }
+
+    // Method to get indices to modify based on user input in 'A B C' format
+    private List<Integer> getIndicesToModify(int itemCount, String side) {
+        List<Integer> indicesToModify = new ArrayList<>();
+        String validOptions = generateValidOptions(itemCount);
+
+        while (true) {
+            String input = inputHandler.getInput("Enter the letters of the " + side + " items you want to modify seperated by a white space ").trim().toUpperCase();
+            String[] selectedItems = input.split("\\s+");
+
+            boolean isValid = true;
+            for (String item : selectedItems) {
+                if (item.length() != 1 || validOptions.indexOf(item.charAt(0)) == -1) {
+                    isValid = false;
+                    break;
+                } else {
+                    int index = item.charAt(0) - 'A';
+                    if (!indicesToModify.contains(index)) {
+                        indicesToModify.add(index);
+                    }
+                }
+            }
+
+            if (isValid) {
+                break;
+            } else {
+                outputHandler.displayMessage("Invalid input. Please enter valid letters separated by spaces (e.g., A B C).");
+            }
+        }
+        return indicesToModify;
+    }
+
+    // Generate valid options based on the number of items
+    private String generateValidOptions(int itemCount) {
+        StringBuilder options = new StringBuilder();
+        for (int i = 0; i < itemCount; i++) {
+            options.append((char) ('A' + i));
+        }
+        return options.toString();
+    }
 
     public ArrayList<String> getLeftItems() {
         return leftItems;

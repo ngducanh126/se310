@@ -107,36 +107,51 @@ public class MultipleChoiceQuestion extends Question {
                     break;
                 }
 
-                // Check if the input is a valid choice
-                int choiceIndex = choiceToModify.charAt(0) - 'A';
-                if (choiceIndex >= 0 && choiceIndex < choices.size()) {
-                    String newChoice = inputHandler.getInput("Enter the new value for choice " + choiceToModify + " (or leave blank to keep current): ");
-                    if (!newChoice.isEmpty()) {
-                        choices.set(choiceIndex, newChoice);
-                        outputHandler.displayMessage("Choice " + choiceToModify + " modified successfully!");
+                // Check if the input is a single valid letter within the choices range
+                if (choiceToModify.length() == 1) {
+                    int choiceIndex = choiceToModify.charAt(0) - 'A';
+                    if (choiceIndex >= 0 && choiceIndex < choices.size()) {
+                        String newChoice = inputHandler.getInput("Enter the new value for choice " + choiceToModify + " (or leave blank to keep current): ");
+                        if (!newChoice.isEmpty()) {
+                            choices.set(choiceIndex, newChoice);
+                            outputHandler.displayMessage("Choice " + choiceToModify + " modified successfully!");
+                        }
+                        continue;
                     }
-                } else {
-                    outputHandler.displayMessage("Invalid choice. Please enter a valid letter.");
                 }
+
+                // If the input is invalid, display an error message
+                outputHandler.displayMessage("Invalid choice. Please enter a valid letter corresponding to the available options.");
             }
             outputHandler.displayMessage("Multiple-choice options modified successfully!");
         }
-
-        // Prompt to modify the maxValidChoices
+        // Ask the user if they want to modify the maximum number of allowed choices
+        String modifyMaxChoices;
         while (true) {
-            try {
-                int newMaxValidChoices = Integer.parseInt(inputHandler.getInput("Enter the maximum number of choices allowed (1 to " + choices.size() + "): "));
-                if (newMaxValidChoices > 0 && newMaxValidChoices <= choices.size()) {
-                    maxValidChoices = newMaxValidChoices;
-                    outputHandler.displayMessage("Maximum number of allowed choices modified successfully!");
-                    break;
-                } else {
-                    outputHandler.displayMessage("Please enter a number between 1 and " + choices.size() + ".");
+            modifyMaxChoices = inputHandler.getInput("Do you want to modify the maximum number of allowed choices? (yes/no): ").toLowerCase();
+            if (modifyMaxChoices.equals("yes") || modifyMaxChoices.equals("no")) {
+                break;
+            }
+            outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+        }
+
+        if (modifyMaxChoices.equals("yes")) {
+            while (true) {
+                try {
+                    int newMaxValidChoices = Integer.parseInt(inputHandler.getInput("Enter the maximum number of choices allowed : "));
+                    if (newMaxValidChoices > 0 && newMaxValidChoices <= choices.size()) {
+                        maxValidChoices = newMaxValidChoices;
+                        outputHandler.displayMessage("Maximum number of allowed choices modified successfully!");
+                        break;
+                    } else {
+                        outputHandler.displayMessage("Please enter a number between 1 and " + choices.size() + ".");
+                    }
+                } catch (NumberFormatException e) {
+                    outputHandler.displayMessage("Invalid input. Please enter a valid number.");
                 }
-            } catch (NumberFormatException e) {
-                outputHandler.displayMessage("Invalid input. Please enter a valid number.");
             }
         }
+
     }
 
     public ArrayList<String> getChoices() {

@@ -8,7 +8,7 @@ public class ShortAnswerQuestion extends EssayQuestion {
 
     @Override
     public void displayQuestion() {
-        outputHandler.displayMessage(questionText + " (Short Answer Question. Limit: " + characterLimit + " characters)");
+        outputHandler.displayMessage(questionText + " (Short Answer Question. Limit: " + characterLimit + " characters.)");
     }
 
     @Override

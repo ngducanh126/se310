@@ -15,18 +15,33 @@ public class ValidDateQuestion extends Question {
     @Override
     public void take() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String response = inputHandler.getInput("Enter a date (YYYY-MM-DD): ");
 
         while (true) {
+            String response = inputHandler.getInput("Enter a date (YYYY-MM-DD): ");
             try {
                 LocalDate dateResponse = LocalDate.parse(response, formatter);
                 responses.add(dateResponse.toString()); // Store in consistent format
-                break;
+                outputHandler.displayMessage("Date added successfully: " + dateResponse);
+
+                // Ask if the user wants to enter another date
+                String moreInput;
+                while (true) {
+                    moreInput = inputHandler.getInput("Do you want to enter another date? (yes/no): ");
+                    if (moreInput.equalsIgnoreCase("yes") || moreInput.equalsIgnoreCase("no")) {
+                        break;
+                    }
+                    outputHandler.displayMessage("Invalid input. Please enter 'yes' or 'no'.");
+                }
+                if (moreInput.equalsIgnoreCase("no")) {
+                    break;
+                }
+
             } catch (DateTimeParseException e) {
-                response = inputHandler.getInput("Invalid date format. Please enter the date in YYYY-MM-DD format: ");
+                outputHandler.displayMessage("Invalid date format. Please enter the date in YYYY-MM-DD format.");
             }
         }
     }
+
     @Override
     public void editQuestion() {
         // Prompt to modify the question text
