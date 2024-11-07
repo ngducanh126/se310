@@ -126,7 +126,6 @@ public class Client {
                             outputHandler.displayMessage("Invalid input. Please enter a valid number.");
                         }
                     }
-
                     // Prompt for the maximum valid choices allowed
                     int maxValidChoices = 0;
                     while (true) {
@@ -142,22 +141,15 @@ public class Client {
                         }
                     }
 
-                    // Collect each choice, ensuring no duplicates
+                    // Collect each choice
                     for (int i = 1; i <= numChoices; i++) {
-                        while (true) {
-                            String thisChoice = inputHandler.getInput("Enter choice #" + i + ": ");
-                            if (choices.contains(thisChoice )) {
-                                outputHandler.displayMessage("This choice already exists. Please enter a unique choice.");
-                            } else {
-                                choices.add(thisChoice );
-                                break;
-                            }
-                        }
+                        choices.add(inputHandler.getInput("Enter choice #" + i + ": "));
                     }
 
                     // Add the question to the survey with maxValidChoices as the allowed selection limit
                     currentSurvey.addQuestion(new MultipleChoiceQuestion(mcQuestionText, choices, maxValidChoices, outputHandler, inputHandler));
                     break;
+
 
                 case 3:
                     // Short Answer Question
@@ -387,3 +379,4 @@ public class Client {
         currentSurvey.modifySurvey(); // Pass inputHandler
     }
 }
+

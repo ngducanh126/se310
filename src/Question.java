@@ -51,3 +51,4 @@ public abstract class Question implements Serializable {
         this.inputHandler = inputHandler;
     }
 }
+
